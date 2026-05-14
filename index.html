@@ -1,0 +1,1008 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LA GARRA — Garra Robótica Automatizada</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Space+Mono:ital,wght@0,400;0,700;1,400&family=DM+Sans:ital,wght@0,300;0,400;0,600;1,300&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --black: #0a0a0a;
+    --white: #f5f2ea;
+    --acid: #c8f000;
+    --rust: #e8490f;
+    --steel: #4a5568;
+    --mid: #1a1a1a;
+    --border: rgba(200,240,0,0.3);
+  }
+ 
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+ 
+  html { scroll-behavior: smooth; }
+ 
+  body {
+    background: var(--black);
+    color: var(--white);
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 300;
+    line-height: 1.7;
+    overflow-x: hidden;
+    cursor: crosshair;
+  }
+ 
+  /* ── NOISE OVERLAY ── */
+  body::before {
+    content: '';
+    position: fixed; inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+    pointer-events: none; z-index: 9999; opacity: 0.5;
+  }
+ 
+  /* ── HERO ── */
+  .hero {
+    min-height: 100vh;
+    display: grid;
+    grid-template-rows: auto 1fr auto;
+    position: relative;
+    border-bottom: 1px solid var(--border);
+    overflow: hidden;
+  }
+ 
+  .hero-grid {
+    position: absolute; inset: 0;
+    background-image:
+      linear-gradient(var(--border) 1px, transparent 1px),
+      linear-gradient(90deg, var(--border) 1px, transparent 1px);
+    background-size: 60px 60px;
+    animation: gridPulse 8s ease-in-out infinite;
+  }
+ 
+  @keyframes gridPulse {
+    0%, 100% { opacity: 0.4; }
+    50% { opacity: 0.8; }
+  }
+ 
+  .topbar {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 1.5rem 3rem;
+    border-bottom: 1px solid var(--border);
+    position: relative; z-index: 10;
+    font-family: 'Space Mono', monospace;
+    font-size: 0.7rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--acid);
+  }
+ 
+  .topbar-tag {
+    background: var(--acid);
+    color: var(--black);
+    padding: 0.2rem 0.8rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+  }
+ 
+  .hero-content {
+    display: flex; flex-direction: column; justify-content: center;
+    padding: 4rem 3rem;
+    position: relative; z-index: 10;
+  }
+ 
+  .hero-eyebrow {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.7rem;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: var(--acid);
+    margin-bottom: 2rem;
+    display: flex; align-items: center; gap: 1rem;
+  }
+ 
+  .hero-eyebrow::before {
+    content: '';
+    display: inline-block;
+    width: 40px; height: 1px;
+    background: var(--acid);
+  }
+ 
+  .hero-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(6rem, 18vw, 18rem);
+    line-height: 0.85;
+    letter-spacing: -0.02em;
+    color: var(--white);
+    position: relative;
+  }
+ 
+  .hero-title .accent {
+    color: var(--acid);
+    display: block;
+  }
+ 
+  .hero-title .stroke {
+    -webkit-text-stroke: 2px var(--white);
+    color: transparent;
+    display: block;
+  }
+ 
+  .hero-subtitle {
+    font-size: 1rem;
+    font-weight: 300;
+    color: rgba(245,242,234,0.55);
+    max-width: 480px;
+    margin-top: 2rem;
+    line-height: 1.8;
+    font-style: italic;
+  }
+ 
+  .hero-meta {
+    padding: 1.5rem 3rem;
+    border-top: 1px solid var(--border);
+    display: flex; gap: 3rem; flex-wrap: wrap;
+    position: relative; z-index: 10;
+    font-family: 'Space Mono', monospace;
+    font-size: 0.65rem;
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    color: rgba(245,242,234,0.4);
+  }
+ 
+  .hero-meta span { color: var(--white); display: block; font-size: 0.75rem; }
+ 
+  /* ── SCROLLING TICKER ── */
+  .ticker {
+    background: var(--acid);
+    color: var(--black);
+    padding: 0.6rem 0;
+    overflow: hidden;
+    white-space: nowrap;
+  }
+ 
+  .ticker-inner {
+    display: inline-flex; gap: 0;
+    animation: ticker 25s linear infinite;
+    font-family: 'Space Mono', monospace;
+    font-size: 0.7rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+ 
+  .ticker-item { padding: 0 2rem; }
+  .ticker-item::after { content: '◆'; padding-left: 2rem; }
+ 
+  @keyframes ticker {
+    from { transform: translateX(0); }
+    to { transform: translateX(-50%); }
+  }
+ 
+  /* ── SECTIONS ── */
+  section { padding: 6rem 3rem; border-bottom: 1px solid var(--border); }
+ 
+  .section-label {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.65rem;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: var(--acid);
+    margin-bottom: 3rem;
+    display: flex; align-items: center; gap: 1rem;
+  }
+ 
+  .section-label::after {
+    content: '';
+    flex: 1; height: 1px;
+    background: var(--border);
+  }
+ 
+  .section-number {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 8rem;
+    line-height: 1;
+    color: rgba(200,240,0,0.07);
+    position: absolute;
+    right: 3rem; top: 4rem;
+    pointer-events: none;
+  }
+ 
+  h2 {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(2.5rem, 6vw, 5rem);
+    line-height: 1;
+    letter-spacing: 0.02em;
+    margin-bottom: 2rem;
+  }
+ 
+  h3 {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.85rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--acid);
+    margin-bottom: 0.8rem;
+  }
+ 
+  p { color: rgba(245,242,234,0.7); max-width: 680px; margin-bottom: 1.2rem; }
+ 
+  /* ── RESUMEN / ABSTRACT ── */
+  .abstract-grid {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 4rem;
+    margin-top: 3rem;
+  }
+ 
+  .abstract-block {
+    border-left: 3px solid var(--acid);
+    padding-left: 2rem;
+  }
+ 
+  .abstract-block p { max-width: 100%; }
+ 
+  /* ── OBJETIVOS ── */
+  .objectives-list {
+    list-style: none;
+    margin-top: 2rem;
+    display: flex; flex-direction: column; gap: 1rem;
+  }
+ 
+  .objectives-list li {
+    display: flex; gap: 1.5rem; align-items: flex-start;
+    padding: 1.2rem 1.5rem;
+    border: 1px solid rgba(200,240,0,0.15);
+    transition: border-color 0.3s, background 0.3s;
+    color: rgba(245,242,234,0.7);
+    line-height: 1.6;
+  }
+ 
+  .objectives-list li:hover {
+    border-color: var(--acid);
+    background: rgba(200,240,0,0.04);
+  }
+ 
+  .obj-num {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 2rem;
+    line-height: 1;
+    color: var(--acid);
+    flex-shrink: 0;
+    width: 2rem;
+    text-align: right;
+  }
+ 
+  /* ── COMPONENTES ── */
+  .components-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 1px;
+    background: var(--border);
+    margin-top: 3rem;
+    border: 1px solid var(--border);
+  }
+ 
+  .component-card {
+    background: var(--black);
+    padding: 1.8rem;
+    transition: background 0.3s;
+    position: relative;
+    overflow: hidden;
+  }
+ 
+  .component-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+    background: var(--acid);
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 0.4s ease;
+  }
+ 
+  .component-card:hover { background: rgba(200,240,0,0.04); }
+  .component-card:hover::before { transform: scaleX(1); }
+ 
+  .component-icon {
+    font-size: 1.8rem;
+    margin-bottom: 1rem;
+    display: block;
+  }
+ 
+  .component-name {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: var(--white);
+    margin-bottom: 0.4rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+ 
+  .component-fn {
+    font-size: 0.8rem;
+    color: rgba(245,242,234,0.45);
+    line-height: 1.5;
+  }
+ 
+  /* ── FMEA TABLE ── */
+  .table-wrap { overflow-x: auto; margin-top: 2rem; }
+ 
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.82rem;
+  }
+ 
+  thead tr {
+    background: var(--acid);
+    color: var(--black);
+  }
+ 
+  thead th {
+    padding: 0.9rem 1rem;
+    text-align: left;
+    font-family: 'Space Mono', monospace;
+    font-size: 0.65rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    font-weight: 700;
+  }
+ 
+  tbody tr {
+    border-bottom: 1px solid rgba(200,240,0,0.1);
+    transition: background 0.2s;
+    color: rgba(245,242,234,0.7);
+  }
+ 
+  tbody tr:hover { background: rgba(200,240,0,0.04); }
+ 
+  tbody td {
+    padding: 0.9rem 1rem;
+    vertical-align: top;
+    line-height: 1.5;
+  }
+ 
+  .risk-alto {
+    color: var(--rust);
+    font-family: 'Space Mono', monospace;
+    font-size: 0.7rem;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+  }
+ 
+  .risk-medio {
+    color: #f5c842;
+    font-family: 'Space Mono', monospace;
+    font-size: 0.7rem;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+  }
+ 
+  /* ── ENERGÍA ── */
+  .energy-grid {
+    display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+    gap: 1.5rem; margin-top: 2rem;
+  }
+ 
+  .energy-card {
+    border: 1px solid var(--border);
+    padding: 1.5rem;
+    position: relative;
+  }
+ 
+  .energy-val {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 2.8rem;
+    color: var(--acid);
+    line-height: 1;
+  }
+ 
+  .energy-unit {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.65rem;
+    color: rgba(245,242,234,0.4);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+ 
+  .energy-label {
+    font-size: 0.75rem;
+    color: rgba(245,242,234,0.55);
+    margin-top: 0.5rem;
+    line-height: 1.4;
+  }
+ 
+  /* ── CONCLUSIONES ── */
+  .conclusions-list {
+    list-style: none;
+    margin-top: 2rem;
+    display: flex; flex-direction: column; gap: 0;
+  }
+ 
+  .conclusions-list li {
+    padding: 1.5rem 0;
+    border-bottom: 1px solid var(--border);
+    display: grid;
+    grid-template-columns: 3rem 1fr;
+    gap: 1.5rem;
+    align-items: start;
+    color: rgba(245,242,234,0.7);
+    line-height: 1.7;
+    transition: color 0.3s;
+  }
+ 
+  .conclusions-list li:hover { color: var(--white); }
+ 
+  .conc-bullet {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 2rem;
+    color: var(--acid);
+    line-height: 1.2;
+  }
+ 
+  /* ── REFERENCIAS ── */
+  .refs-list {
+    list-style: none;
+    margin-top: 2rem;
+    display: flex; flex-direction: column; gap: 0;
+    font-family: 'Space Mono', monospace;
+    font-size: 0.72rem;
+    line-height: 1.8;
+  }
+ 
+  .refs-list li {
+    padding: 1rem 0 1rem 1.5rem;
+    border-bottom: 1px solid rgba(200,240,0,0.08);
+    color: rgba(245,242,234,0.5);
+    position: relative;
+    transition: color 0.2s, padding-left 0.3s;
+  }
+ 
+  .refs-list li::before {
+    content: '//';
+    position: absolute; left: 0;
+    color: var(--acid);
+    font-size: 0.65rem;
+  }
+ 
+  .refs-list li:hover { color: rgba(245,242,234,0.8); padding-left: 2rem; }
+ 
+  .refs-list em { color: rgba(245,242,234,0.7); font-style: italic; }
+ 
+  /* ── FOOTER ── */
+  footer {
+    padding: 3rem;
+    display: flex; justify-content: space-between; align-items: center;
+    flex-wrap: wrap; gap: 1rem;
+    font-family: 'Space Mono', monospace;
+    font-size: 0.65rem;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: rgba(245,242,234,0.3);
+  }
+ 
+  footer .footer-logo {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 2rem;
+    color: var(--white);
+    letter-spacing: 0.05em;
+  }
+ 
+  footer .footer-logo span { color: var(--acid); }
+ 
+  /* ── ANIMATIONS ── */
+  .fade-in {
+    opacity: 0;
+    transform: translateY(30px);
+    transition: opacity 0.8s ease, transform 0.8s ease;
+  }
+ 
+  .fade-in.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+ 
+  /* ── NAV ── */
+  nav {
+    position: fixed; right: 2rem; top: 50%;
+    transform: translateY(-50%);
+    display: flex; flex-direction: column; gap: 1rem;
+    z-index: 100;
+  }
+ 
+  nav a {
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: rgba(245,242,234,0.2);
+    display: block;
+    transition: background 0.3s, transform 0.3s;
+    text-decoration: none;
+    position: relative;
+  }
+ 
+  nav a::after {
+    content: attr(data-label);
+    position: absolute;
+    right: 1.2rem; top: 50%;
+    transform: translateY(-50%);
+    font-family: 'Space Mono', monospace;
+    font-size: 0.6rem;
+    letter-spacing: 0.1em;
+    color: var(--acid);
+    white-space: nowrap;
+    opacity: 0;
+    transition: opacity 0.3s;
+    pointer-events: none;
+  }
+ 
+  nav a:hover { background: var(--acid); transform: scale(1.5); }
+  nav a:hover::after { opacity: 1; }
+  nav a.active { background: var(--acid); }
+ 
+  /* ── METHODOLOGY STEPS ── */
+  .steps {
+    display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 2rem; margin-top: 3rem;
+  }
+ 
+  .step-card {
+    position: relative;
+    padding: 2rem;
+    border: 1px solid rgba(200,240,0,0.15);
+    overflow: hidden;
+    transition: border-color 0.3s;
+  }
+ 
+  .step-card:hover { border-color: var(--acid); }
+ 
+  .step-num {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 5rem;
+    line-height: 0.9;
+    color: rgba(200,240,0,0.1);
+    position: absolute;
+    top: 1rem; right: 1.5rem;
+  }
+ 
+  .step-title {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.75rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--acid);
+    margin-bottom: 1rem;
+    position: relative; z-index: 1;
+  }
+ 
+  .step-desc {
+    font-size: 0.85rem;
+    color: rgba(245,242,234,0.6);
+    line-height: 1.7;
+    position: relative; z-index: 1;
+    max-width: 100%;
+  }
+ 
+  /* ── COMPARISON ── */
+  .compare-grid {
+    display: grid; grid-template-columns: 1fr 1fr;
+    gap: 3rem; margin-top: 3rem;
+  }
+ 
+  .compare-col h3 { margin-bottom: 1.5rem; }
+ 
+  .compare-item {
+    display: flex; justify-content: space-between;
+    padding: 0.8rem 0;
+    border-bottom: 1px solid rgba(200,240,0,0.1);
+    font-size: 0.85rem;
+    color: rgba(245,242,234,0.6);
+  }
+ 
+  .compare-val-bad { color: var(--rust); font-family: 'Space Mono', monospace; font-size: 0.75rem; }
+  .compare-val-good { color: var(--acid); font-family: 'Space Mono', monospace; font-size: 0.75rem; }
+ 
+  @media (max-width: 768px) {
+    .abstract-grid, .compare-grid { grid-template-columns: 1fr; }
+    .topbar { flex-direction: column; gap: 0.5rem; text-align: center; }
+    nav { display: none; }
+    section { padding: 4rem 1.5rem; }
+    .hero-content { padding: 3rem 1.5rem; }
+    .topbar, .hero-meta, footer { padding-left: 1.5rem; padding-right: 1.5rem; }
+  }
+</style>
+</head>
+<body>
+ 
+<!-- SIDE NAV -->
+<nav id="sidenav">
+  <a href="#hero" data-label="Inicio" class="active"></a>
+  <a href="#resumen" data-label="Resumen"></a>
+  <a href="#objetivos" data-label="Objetivos"></a>
+  <a href="#componentes" data-label="Componentes"></a>
+  <a href="#metodologia" data-label="Metodología"></a>
+  <a href="#fmea" data-label="FMEA"></a>
+  <a href="#energia" data-label="Energía"></a>
+  <a href="#comparacion" data-label="Comparación"></a>
+  <a href="#conclusiones" data-label="Conclusiones"></a>
+  <a href="#referencias" data-label="Referencias"></a>
+</nav>
+ 
+<!-- HERO -->
+<section class="hero" id="hero">
+  <div class="hero-grid"></div>
+  <div class="topbar">
+    <div>USB — Tecnología en Automatización Industrial</div>
+    <div class="topbar-tag">Proyecto 2026</div>
+    <div>Bogotá, Colombia</div>
+  </div>
+  <div class="hero-content">
+    <div class="hero-eyebrow">Garra Robótica Automatizada para Reciclaje</div>
+    <h1 class="hero-title">
+      <span>LA</span>
+      <span class="accent">GARRA</span>
+      <span class="stroke">ROBÓTICA</span>
+    </h1>
+    <p class="hero-subtitle">Diseño y programación de un sistema automatizado capaz de identificar, separar y clasificar residuos reciclables mediante sensores electrónicos y control Arduino.</p>
+  </div>
+  <div class="hero-meta">
+    <div>Autores<span>Rojas · Tique · Torres · Ortiz</span></div>
+    <div>Tutor<span>Fabián Orlando García Saldaña</span></div>
+    <div>Universidad<span>San Buenaventura</span></div>
+    <div>Fecha<span>Marzo 2026</span></div>
+  </div>
+</section>
+ 
+<!-- TICKER -->
+<div class="ticker">
+  <div class="ticker-inner">
+    <span class="ticker-item">Sensor Inductivo</span>
+    <span class="ticker-item">Sensor Capacitivo</span>
+    <span class="ticker-item">Sensor Ultrasónico</span>
+    <span class="ticker-item">Arduino UNO</span>
+    <span class="ticker-item">Banda Transportadora</span>
+    <span class="ticker-item">Puente H L298N</span>
+    <span class="ticker-item">Reciclaje Automatizado</span>
+    <span class="ticker-item">Robótica Industrial</span>
+    <span class="ticker-item">Servomotores</span>
+    <span class="ticker-item">Sensor Inductivo</span>
+    <span class="ticker-item">Sensor Capacitivo</span>
+    <span class="ticker-item">Sensor Ultrasónico</span>
+    <span class="ticker-item">Arduino UNO</span>
+    <span class="ticker-item">Banda Transportadora</span>
+    <span class="ticker-item">Puente H L298N</span>
+    <span class="ticker-item">Reciclaje Automatizado</span>
+    <span class="ticker-item">Robótica Industrial</span>
+    <span class="ticker-item">Servomotores</span>
+  </div>
+</div>
+ 
+<!-- RESUMEN -->
+<section id="resumen" style="position:relative;">
+  <span class="section-number">01</span>
+  <div class="section-label">01 — Resumen</div>
+  <h2 class="fade-in">Sobre el<br>Proyecto</h2>
+  <div class="abstract-grid">
+    <div class="abstract-block fade-in">
+      <h3>Español</h3>
+      <p>Este proyecto consiste en el diseño y programación de una garra robótica automatizada capaz de identificar, separar y clasificar diferentes tipos de residuos —vidrio, plástico, metal— para facilitar el proceso de reciclaje.</p>
+      <p>El sistema utiliza sensores electrónicos capacitivos, inductivos y ultrasónicos que detectan las características de cada material y los traslada de la banda transportadora a su sitio de disposición correspondiente.</p>
+      <p>La propuesta busca mejorar la gestión de residuos, reducir la contaminación ambiental y eliminar el riesgo de lesiones por manipulación manual de materiales peligrosos.</p>
+    </div>
+    <div class="abstract-block fade-in">
+      <h3>Abstract (English)</h3>
+      <p>This project involves the design and programming of an automated robotic gripper capable of identifying, separating, and sorting different types of waste —glass, plastic, metal— to facilitate the recycling process.</p>
+      <p>The system uses electronic sensors —capacitive, inductive, and ultrasonic— to detect the characteristics of each material; waste is then transferred from the conveyor belt to its designated disposal site.</p>
+      <p>The solution aims to improve waste management, reduce environmental pollution, and prevent skin injuries caused by improper handling of hazardous waste.</p>
+    </div>
+  </div>
+</section>
+ 
+<!-- OBJETIVOS -->
+<section id="objetivos" style="position:relative;">
+  <span class="section-number">02</span>
+  <div class="section-label">02 — Objetivos</div>
+  <h2 class="fade-in">Qué Queremos<br>Lograr</h2>
+  <p class="fade-in" style="margin-bottom:0;">Diseñar y desarrollar una garra robótica automatizada que permita, a través de sensores y sistemas de control electrónico, identificar, manipular y clasificar residuos reciclables.</p>
+  <ul class="objectives-list">
+    <li class="fade-in"><span class="obj-num">1</span>Diseñar una estructura de la garra robótica que permita manipular residuos de forma segura.</li>
+    <li class="fade-in"><span class="obj-num">2</span>Implementar sensores inductivos, capacitivos y ultrasónicos para detectar e identificar metal, plástico y vidrio.</li>
+    <li class="fade-in"><span class="obj-num">3</span>Programar un sistema de control Arduino que automatice el funcionamiento de la garra y la clasificación de residuos.</li>
+    <li class="fade-in"><span class="obj-num">4</span>Integrar actuadores y motores de desplazamiento en el sistema robótico.</li>
+    <li class="fade-in"><span class="obj-num">5</span>Implementar un sistema de clasificación automática con banda transportadora y contenedores de separación.</li>
+  </ul>
+</section>
+ 
+<!-- COMPONENTES -->
+<section id="componentes" style="position:relative;">
+  <span class="section-number">03</span>
+  <div class="section-label">03 — Componentes</div>
+  <h2 class="fade-in">Hardware del<br>Sistema</h2>
+  <div class="components-grid fade-in">
+    <div class="component-card">
+      <span class="component-icon">🧠</span>
+      <div class="component-name">Arduino UNO</div>
+      <div class="component-fn">Control principal del sistema. Procesa señales de sensores y activa actuadores.</div>
+    </div>
+    <div class="component-card">
+      <span class="component-icon">🔩</span>
+      <div class="component-name">Sensor Inductivo LJ12A3</div>
+      <div class="component-fn">Detección de objetos metálicos sin contacto físico mediante campo electromagnético.</div>
+    </div>
+    <div class="component-card">
+      <span class="component-icon">⚡</span>
+      <div class="component-name">Sensor Capacitivo</div>
+      <div class="component-fn">Identifica plástico y vidrio mediante variación de capacitancia eléctrica.</div>
+    </div>
+    <div class="component-card">
+      <span class="component-icon">📡</span>
+      <div class="component-name">Sensor Ultrasónico HC-SR04</div>
+      <div class="component-fn">Detecta presencia y posición de residuos en la banda mediante ondas sonoras.</div>
+    </div>
+    <div class="component-card">
+      <span class="component-icon">⚙️</span>
+      <div class="component-name">Servomotores</div>
+      <div class="component-fn">Controlan el movimiento preciso de la garra robótica para agarre y clasificación.</div>
+    </div>
+    <div class="component-card">
+      <span class="component-icon">🔄</span>
+      <div class="component-name">Motor DC</div>
+      <div class="component-fn">Impulsa el movimiento continuo de la banda transportadora.</div>
+    </div>
+    <div class="component-card">
+      <span class="component-icon">🔌</span>
+      <div class="component-name">Puente H L298N</div>
+      <div class="component-fn">Controla la dirección y velocidad del motor DC de la banda.</div>
+    </div>
+    <div class="component-card">
+      <span class="component-icon">📦</span>
+      <div class="component-name">Banda Transportadora</div>
+      <div class="component-fn">Transporta los residuos hacia la zona de detección y clasificación.</div>
+    </div>
+    <div class="component-card">
+      <span class="component-icon">🔋</span>
+      <div class="component-name">Fuente de Alimentación</div>
+      <div class="component-fn">Suministra energía estable a todos los componentes del sistema.</div>
+    </div>
+  </div>
+</section>
+ 
+<!-- METODOLOGÍA -->
+<section id="metodologia" style="position:relative;">
+  <span class="section-number">04</span>
+  <div class="section-label">04 — Metodología</div>
+  <h2 class="fade-in">Proceso de<br>Desarrollo</h2>
+  <div class="steps">
+    <div class="step-card fade-in">
+      <div class="step-num">1</div>
+      <div class="step-title">Investigación</div>
+      <p class="step-desc">Búsqueda de información sobre automatización industrial, reciclaje, robótica y sensórica. Análisis de riesgos en clasificación manual de residuos.</p>
+    </div>
+    <div class="step-card fade-in">
+      <div class="step-num">2</div>
+      <div class="step-title">Diseño del Sistema</div>
+      <p class="step-desc">Definición de la estructura mecánica de la garra y banda transportadora. Selección de componentes electrónicos y elaboración de diagramas.</p>
+    </div>
+    <div class="step-card fade-in">
+      <div class="step-num">3</div>
+      <div class="step-title">Desarrollo Electrónico</div>
+      <p class="step-desc">Conexión de sensores, motores y actuadores al microcontrolador. Pruebas de lectura de sensores y control de motores por separado.</p>
+    </div>
+    <div class="step-card fade-in">
+      <div class="step-num">4</div>
+      <div class="step-title">Programación</div>
+      <p class="step-desc">Codificación en Arduino para detección automática de materiales y control de movimiento de la garra según el tipo de residuo identificado.</p>
+    </div>
+    <div class="step-card fade-in">
+      <div class="step-num">5</div>
+      <div class="step-title">Construcción</div>
+      <p class="step-desc">Montaje físico del prototipo: estructura de la banda, garra robótica, soportes y ensamblaje de todos los componentes electrónicos y mecánicos.</p>
+    </div>
+    <div class="step-card fade-in">
+      <div class="step-num">6</div>
+      <div class="step-title">Pruebas y Validación</div>
+      <p class="step-desc">Evaluación de la precisión de los sensores y el movimiento de la garra. Corrección de fallas en programación y conexiones eléctricas.</p>
+    </div>
+  </div>
+</section>
+ 
+<!-- FMEA -->
+<section id="fmea" style="position:relative;">
+  <span class="section-number">05</span>
+  <div class="section-label">05 — Análisis FMEA</div>
+  <h2 class="fade-in">Análisis de<br>Fallas y Riesgos</h2>
+  <div class="table-wrap fade-in">
+    <table>
+      <thead>
+        <tr>
+          <th>Proceso</th>
+          <th>Falla</th>
+          <th>Causa</th>
+          <th>Efecto</th>
+          <th>Riesgo</th>
+          <th>Solución</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Separación manual</td>
+          <td>Cortes en las manos</td>
+          <td>Manipulación de vidrio</td>
+          <td>Lesiones físicas</td>
+          <td><span class="risk-alto">ALTO</span></td>
+          <td>Garra robótica</td>
+        </tr>
+        <tr>
+          <td>Clasificación</td>
+          <td>Error humano</td>
+          <td>Cansancio del operario</td>
+          <td>Mala separación</td>
+          <td><span class="risk-medio">MEDIO</span></td>
+          <td>Uso de sensores</td>
+        </tr>
+        <tr>
+          <td>Transporte de residuos</td>
+          <td>Acumulación de materiales</td>
+          <td>Mala organización</td>
+          <td>Retrasos en proceso</td>
+          <td><span class="risk-medio">MEDIO</span></td>
+          <td>Banda transportadora</td>
+        </tr>
+        <tr>
+          <td>Detección de materiales</td>
+          <td>Clasificación incorrecta</td>
+          <td>Baja precisión humana</td>
+          <td>Contaminación del reciclaje</td>
+          <td><span class="risk-alto">ALTO</span></td>
+          <td>Sensores inteligentes</td>
+        </tr>
+        <tr>
+          <td>Manipulación de residuos</td>
+          <td>Contacto con contaminación</td>
+          <td>Exposición directa</td>
+          <td>Enfermedades ocupacionales</td>
+          <td><span class="risk-alto">ALTO</span></td>
+          <td>Automatización total</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+ 
+<!-- ENERGÍA + KPIs -->
+<section id="energia" style="position:relative;">
+  <span class="section-number">06</span>
+  <div class="section-label">06 — Análisis Energético</div>
+  <h2 class="fade-in">Consumo y<br>Desempeño</h2>
+  <div class="energy-grid fade-in">
+    <div class="energy-card">
+      <div class="energy-val">0.25</div>
+      <div class="energy-unit">Vatios</div>
+      <div class="energy-label">Arduino UNO — 5V / 0.05A</div>
+    </div>
+    <div class="energy-card">
+      <div class="energy-val">0.06</div>
+      <div class="energy-unit">Vatios</div>
+      <div class="energy-label">Sensor Inductivo — 5V / 0.01A</div>
+    </div>
+    <div class="energy-card">
+      <div class="energy-val">0.075</div>
+      <div class="energy-unit">Vatios</div>
+      <div class="energy-label">Sensor Ultrasónico — 5V / 0.015A</div>
+    </div>
+    <div class="energy-card">
+      <div class="energy-val">2.5</div>
+      <div class="energy-unit">Vatios</div>
+      <div class="energy-label">Servomotor — 5V / 0.5A</div>
+    </div>
+    <div class="energy-card">
+      <div class="energy-val">3.6</div>
+      <div class="energy-unit">Vatios</div>
+      <div class="energy-label">Motor DC — 9V / 0.3A</div>
+    </div>
+    <div class="energy-card" style="border-color: var(--acid);">
+      <div class="energy-val">&gt;90%</div>
+      <div class="energy-unit">KPI Objetivo</div>
+      <div class="energy-label">Precisión de clasificación esperada</div>
+    </div>
+  </div>
+</section>
+ 
+<!-- COMPARACIÓN -->
+<section id="comparacion" style="position:relative;">
+  <span class="section-number">07</span>
+  <div class="section-label">07 — Antes vs. Después</div>
+  <h2 class="fade-in">Impacto de la<br>Automatización</h2>
+  <div class="compare-grid fade-in">
+    <div class="compare-col">
+      <h3>⚠ Proceso Manual</h3>
+      <div class="compare-item"><span>Riesgo humano</span><span class="compare-val-bad">ALTO</span></div>
+      <div class="compare-item"><span>Velocidad de clasificación</span><span class="compare-val-bad">MEDIA</span></div>
+      <div class="compare-item"><span>Precisión</span><span class="compare-val-bad">VARIABLE</span></div>
+      <div class="compare-item"><span>Esfuerzo físico</span><span class="compare-val-bad">ALTO</span></div>
+      <div class="compare-item"><span>Seguridad</span><span class="compare-val-bad">BAJA</span></div>
+    </div>
+    <div class="compare-col">
+      <h3>✦ Sistema Automatizado</h3>
+      <div class="compare-item"><span>Riesgo humano</span><span class="compare-val-good">BAJO</span></div>
+      <div class="compare-item"><span>Velocidad de clasificación</span><span class="compare-val-good">ALTA</span></div>
+      <div class="compare-item"><span>Precisión</span><span class="compare-val-good">MAYOR</span></div>
+      <div class="compare-item"><span>Esfuerzo físico</span><span class="compare-val-good">BAJO</span></div>
+      <div class="compare-item"><span>Seguridad</span><span class="compare-val-good">ALTA</span></div>
+    </div>
+  </div>
+</section>
+ 
+<!-- CONCLUSIONES -->
+<section id="conclusiones" style="position:relative;">
+  <span class="section-number">08</span>
+  <div class="section-label">08 — Conclusiones</div>
+  <h2 class="fade-in">Lo que<br>Aprendimos</h2>
+  <ul class="conclusions-list">
+    <li class="fade-in"><span class="conc-bullet">→</span>La automatización industrial optimiza totalmente los procesos de reciclaje a través de sistemas de clasificación automática.</li>
+    <li class="fade-in"><span class="conc-bullet">→</span>Los sensores inductivos, capacitivos y ultrasónicos permiten caracterizar diferentes tipos de residuos con alta precisión.</li>
+    <li class="fade-in"><span class="conc-bullet">→</span>La garra robótica elimina el contacto humano con residuos peligrosos, incrementando significativamente la seguridad.</li>
+    <li class="fade-in"><span class="conc-bullet">→</span>Arduino combinado con sensores y actuadores demuestra que es posible desarrollar sistemas automatizados de bajo costo.</li>
+    <li class="fade-in"><span class="conc-bullet">→</span>El proyecto articuló conocimientos de electrónica, programación, control y automatización industrial en una solución real.</li>
+  </ul>
+</section>
+ 
+<!-- REFERENCIAS -->
+<section id="referencias" style="position:relative;">
+  <span class="section-number">09</span>
+  <div class="section-label">09 — Referencias APA 7ª ed.</div>
+  <h2 class="fade-in">Fuentes<br>Bibliográficas</h2>
+  <ul class="refs-list fade-in">
+    <li>AMP Robotics. (s. f.). <em>Robotic recycling systems for material recovery.</em> https://www.amprobotics.com</li>
+    <li>American Society for Quality. (s. f.-a). <em>Failure mode and effects analysis (FMEA).</em> https://asq.org/quality-resources/fmea</li>
+    <li>American Society for Quality. (s. f.-b). <em>Fishbone (Ishikawa) diagram.</em> https://asq.org/quality-resources/fishbone</li>
+    <li>Angulo, J. (2018). <em>Arduino y automatización electrónica.</em> McGraw-Hill.</li>
+    <li>Arduino. (s. f.). <em>Arduino Uno Rev3.</em> Arduino. https://docs.arduino.cc/hardware/uno-rev3/</li>
+    <li>BEEI Journal. (2019). Automatic household waste separation system based on ultrasonic and humidity sensors. <em>Bulletin of Electrical Engineering and Informatics, 8</em>(3), 1158–1166. https://doi.org/10.11591/eei.v8i3.1527</li>
+    <li>Bolton, W. (2015). <em>Sistemas de control y automatización industrial.</em> Alfaomega.</li>
+    <li>Groover, M. P. (2016). <em>Automatización, producción y sistemas de manufactura.</em> Pearson Educación.</li>
+    <li>Ministerio de Ambiente y Desarrollo Sostenible. (2022). <em>Gestión integral de residuos sólidos en Colombia.</em> https://www.minambiente.gov.co</li>
+    <li>Pérez, A. (2020). <em>Introducción a la robótica industrial.</em> Editorial Ra-Ma.</li>
+    <li>ResearchGate. (2024). <em>Automated waste segregation system using Arduino Uno R3.</em> https://www.researchgate.net</li>
+    <li>STMicroelectronics. (s. f.). <em>L298N dual full-bridge driver.</em> https://www.st.com/en/motor-drivers/l298.html</li>
+    <li>Texas Instruments. (s. f.). <em>DRV8871 3.6-A brushed DC motor driver.</em> https://www.ti.com/product/DRV8871</li>
+    <li>TOMRA Recycling. (s. f.). <em>Automated sorting solutions for recycling.</em> https://www.tomra.com/recycling</li>
+    <li>Universidad Estatal Península de Santa Elena. (s. f.). <em>Sistema automatizado de reciclaje.</em> Repositorio UPSE. https://repositorio.upse.edu.ec</li>
+    <li>ZenRobotics. (s. f.). <em>Smart robotic recycling.</em> https://zenrobotics.com</li>
+  </ul>
+</section>
+ 
+<!-- FOOTER -->
+<footer>
+  <div class="footer-logo">LA <span>GARRA</span></div>
+  <div>Universidad San Buenaventura · Bogotá · 2026</div>
+  <div>Automatización Industrial</div>
+</footer>
+ 
+<script>
+  // ── FADE IN ON SCROLL ──
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach((entry, i) => {
+      if (entry.isIntersecting) {
+        setTimeout(() => entry.target.classList.add('visible'), i * 80);
+        observer.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.1 });
+ 
+  document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
+ 
+  // ── ACTIVE NAV DOT ──
+  const sections = document.querySelectorAll('section[id], footer');
+  const navLinks = document.querySelectorAll('nav a');
+ 
+  const navObserver = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        navLinks.forEach(a => a.classList.remove('active'));
+        const active = document.querySelector(`nav a[href="#${entry.target.id}"]`);
+        if (active) active.classList.add('active');
+      }
+    });
+  }, { threshold: 0.4 });
+ 
+  document.querySelectorAll('section[id]').forEach(s => navObserver.observe(s));
+</script>
+</body>
