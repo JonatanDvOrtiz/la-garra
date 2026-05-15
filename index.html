@@ -15,11 +15,11 @@
     --mid: #1a1a1a;
     --border: rgba(200,240,0,0.3);
   }
- 
+
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
- 
+
   html { scroll-behavior: smooth; }
- 
+
   body {
     background: var(--black);
     color: var(--white);
@@ -29,7 +29,7 @@
     overflow-x: hidden;
     cursor: crosshair;
   }
- 
+
   /* ── NOISE OVERLAY ── */
   body::before {
     content: '';
@@ -37,7 +37,7 @@
     background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
     pointer-events: none; z-index: 9999; opacity: 0.5;
   }
- 
+
   /* ── HERO ── */
   .hero {
     min-height: 100vh;
@@ -47,7 +47,7 @@
     border-bottom: 1px solid var(--border);
     overflow: hidden;
   }
- 
+
   .hero-grid {
     position: absolute; inset: 0;
     background-image:
@@ -56,12 +56,12 @@
     background-size: 60px 60px;
     animation: gridPulse 8s ease-in-out infinite;
   }
- 
+
   @keyframes gridPulse {
     0%, 100% { opacity: 0.4; }
     50% { opacity: 0.8; }
   }
- 
+
   .topbar {
     display: flex; justify-content: space-between; align-items: center;
     padding: 1.5rem 3rem;
@@ -73,7 +73,7 @@
     text-transform: uppercase;
     color: var(--acid);
   }
- 
+
   .topbar-tag {
     background: var(--acid);
     color: var(--black);
@@ -81,13 +81,13 @@
     font-weight: 700;
     letter-spacing: 0.1em;
   }
- 
+
   .hero-content {
     display: flex; flex-direction: column; justify-content: center;
     padding: 4rem 3rem;
     position: relative; z-index: 10;
   }
- 
+
   .hero-eyebrow {
     font-family: 'Space Mono', monospace;
     font-size: 0.7rem;
@@ -97,14 +97,14 @@
     margin-bottom: 2rem;
     display: flex; align-items: center; gap: 1rem;
   }
- 
+
   .hero-eyebrow::before {
     content: '';
     display: inline-block;
     width: 40px; height: 1px;
     background: var(--acid);
   }
- 
+
   .hero-title {
     font-family: 'Bebas Neue', sans-serif;
     font-size: clamp(6rem, 18vw, 18rem);
@@ -113,18 +113,18 @@
     color: var(--white);
     position: relative;
   }
- 
+
   .hero-title .accent {
     color: var(--acid);
     display: block;
   }
- 
+
   .hero-title .stroke {
     -webkit-text-stroke: 2px var(--white);
     color: transparent;
     display: block;
   }
- 
+
   .hero-subtitle {
     font-size: 1rem;
     font-weight: 300;
@@ -134,7 +134,7 @@
     line-height: 1.8;
     font-style: italic;
   }
- 
+
   .hero-meta {
     padding: 1.5rem 3rem;
     border-top: 1px solid var(--border);
@@ -146,9 +146,9 @@
     letter-spacing: 0.15em;
     color: rgba(245,242,234,0.4);
   }
- 
+
   .hero-meta span { color: var(--white); display: block; font-size: 0.75rem; }
- 
+
   /* ── SCROLLING TICKER ── */
   .ticker {
     background: var(--acid);
@@ -157,7 +157,7 @@
     overflow: hidden;
     white-space: nowrap;
   }
- 
+
   .ticker-inner {
     display: inline-flex; gap: 0;
     animation: ticker 25s linear infinite;
@@ -167,18 +167,18 @@
     letter-spacing: 0.1em;
     text-transform: uppercase;
   }
- 
+
   .ticker-item { padding: 0 2rem; }
   .ticker-item::after { content: '◆'; padding-left: 2rem; }
- 
+
   @keyframes ticker {
     from { transform: translateX(0); }
     to { transform: translateX(-50%); }
   }
- 
+
   /* ── SECTIONS ── */
   section { padding: 6rem 3rem; border-bottom: 1px solid var(--border); }
- 
+
   .section-label {
     font-family: 'Space Mono', monospace;
     font-size: 0.65rem;
@@ -188,13 +188,13 @@
     margin-bottom: 3rem;
     display: flex; align-items: center; gap: 1rem;
   }
- 
+
   .section-label::after {
     content: '';
     flex: 1; height: 1px;
     background: var(--border);
   }
- 
+
   .section-number {
     font-family: 'Bebas Neue', sans-serif;
     font-size: 8rem;
@@ -204,7 +204,7 @@
     right: 3rem; top: 4rem;
     pointer-events: none;
   }
- 
+
   h2 {
     font-family: 'Bebas Neue', sans-serif;
     font-size: clamp(2.5rem, 6vw, 5rem);
@@ -212,7 +212,7 @@
     letter-spacing: 0.02em;
     margin-bottom: 2rem;
   }
- 
+
   h3 {
     font-family: 'Space Mono', monospace;
     font-size: 0.85rem;
@@ -221,29 +221,29 @@
     color: var(--acid);
     margin-bottom: 0.8rem;
   }
- 
+
   p { color: rgba(245,242,234,0.7); max-width: 680px; margin-bottom: 1.2rem; }
- 
+
   /* ── RESUMEN / ABSTRACT ── */
   .abstract-grid {
     display: grid; grid-template-columns: 1fr 1fr; gap: 4rem;
     margin-top: 3rem;
   }
- 
+
   .abstract-block {
     border-left: 3px solid var(--acid);
     padding-left: 2rem;
   }
- 
+
   .abstract-block p { max-width: 100%; }
- 
+
   /* ── OBJETIVOS ── */
   .objectives-list {
     list-style: none;
     margin-top: 2rem;
     display: flex; flex-direction: column; gap: 1rem;
   }
- 
+
   .objectives-list li {
     display: flex; gap: 1.5rem; align-items: flex-start;
     padding: 1.2rem 1.5rem;
@@ -252,12 +252,12 @@
     color: rgba(245,242,234,0.7);
     line-height: 1.6;
   }
- 
+
   .objectives-list li:hover {
     border-color: var(--acid);
     background: rgba(200,240,0,0.04);
   }
- 
+
   .obj-num {
     font-family: 'Bebas Neue', sans-serif;
     font-size: 2rem;
@@ -267,7 +267,7 @@
     width: 2rem;
     text-align: right;
   }
- 
+
   /* ── COMPONENTES ── */
   .components-grid {
     display: grid;
@@ -277,7 +277,7 @@
     margin-top: 3rem;
     border: 1px solid var(--border);
   }
- 
+
   .component-card {
     background: var(--black);
     padding: 1.8rem;
@@ -285,7 +285,7 @@
     position: relative;
     overflow: hidden;
   }
- 
+
   .component-card::before {
     content: '';
     position: absolute;
@@ -296,16 +296,16 @@
     transform-origin: left;
     transition: transform 0.4s ease;
   }
- 
+
   .component-card:hover { background: rgba(200,240,0,0.04); }
   .component-card:hover::before { transform: scaleX(1); }
- 
+
   .component-icon {
     font-size: 1.8rem;
     margin-bottom: 1rem;
     display: block;
   }
- 
+
   .component-name {
     font-family: 'Space Mono', monospace;
     font-size: 0.75rem;
@@ -315,27 +315,27 @@
     text-transform: uppercase;
     letter-spacing: 0.05em;
   }
- 
+
   .component-fn {
     font-size: 0.8rem;
     color: rgba(245,242,234,0.45);
     line-height: 1.5;
   }
- 
+
   /* ── FMEA TABLE ── */
   .table-wrap { overflow-x: auto; margin-top: 2rem; }
- 
+
   table {
     width: 100%;
     border-collapse: collapse;
     font-size: 0.82rem;
   }
- 
+
   thead tr {
     background: var(--acid);
     color: var(--black);
   }
- 
+
   thead th {
     padding: 0.9rem 1rem;
     text-align: left;
@@ -345,21 +345,21 @@
     text-transform: uppercase;
     font-weight: 700;
   }
- 
+
   tbody tr {
     border-bottom: 1px solid rgba(200,240,0,0.1);
     transition: background 0.2s;
     color: rgba(245,242,234,0.7);
   }
- 
+
   tbody tr:hover { background: rgba(200,240,0,0.04); }
- 
+
   tbody td {
     padding: 0.9rem 1rem;
     vertical-align: top;
     line-height: 1.5;
   }
- 
+
   .risk-alto {
     color: var(--rust);
     font-family: 'Space Mono', monospace;
@@ -367,7 +367,7 @@
     font-weight: 700;
     letter-spacing: 0.05em;
   }
- 
+
   .risk-medio {
     color: #f5c842;
     font-family: 'Space Mono', monospace;
@@ -375,26 +375,26 @@
     font-weight: 700;
     letter-spacing: 0.05em;
   }
- 
+
   /* ── ENERGÍA ── */
   .energy-grid {
     display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
     gap: 1.5rem; margin-top: 2rem;
   }
- 
+
   .energy-card {
     border: 1px solid var(--border);
     padding: 1.5rem;
     position: relative;
   }
- 
+
   .energy-val {
     font-family: 'Bebas Neue', sans-serif;
     font-size: 2.8rem;
     color: var(--acid);
     line-height: 1;
   }
- 
+
   .energy-unit {
     font-family: 'Space Mono', monospace;
     font-size: 0.65rem;
@@ -402,21 +402,21 @@
     letter-spacing: 0.1em;
     text-transform: uppercase;
   }
- 
+
   .energy-label {
     font-size: 0.75rem;
     color: rgba(245,242,234,0.55);
     margin-top: 0.5rem;
     line-height: 1.4;
   }
- 
+
   /* ── CONCLUSIONES ── */
   .conclusions-list {
     list-style: none;
     margin-top: 2rem;
     display: flex; flex-direction: column; gap: 0;
   }
- 
+
   .conclusions-list li {
     padding: 1.5rem 0;
     border-bottom: 1px solid var(--border);
@@ -428,16 +428,16 @@
     line-height: 1.7;
     transition: color 0.3s;
   }
- 
+
   .conclusions-list li:hover { color: var(--white); }
- 
+
   .conc-bullet {
     font-family: 'Bebas Neue', sans-serif;
     font-size: 2rem;
     color: var(--acid);
     line-height: 1.2;
   }
- 
+
   /* ── REFERENCIAS ── */
   .refs-list {
     list-style: none;
@@ -447,7 +447,7 @@
     font-size: 0.72rem;
     line-height: 1.8;
   }
- 
+
   .refs-list li {
     padding: 1rem 0 1rem 1.5rem;
     border-bottom: 1px solid rgba(200,240,0,0.08);
@@ -455,18 +455,18 @@
     position: relative;
     transition: color 0.2s, padding-left 0.3s;
   }
- 
+
   .refs-list li::before {
     content: '//';
     position: absolute; left: 0;
     color: var(--acid);
     font-size: 0.65rem;
   }
- 
+
   .refs-list li:hover { color: rgba(245,242,234,0.8); padding-left: 2rem; }
- 
+
   .refs-list em { color: rgba(245,242,234,0.7); font-style: italic; }
- 
+
   /* ── FOOTER ── */
   footer {
     padding: 3rem;
@@ -478,28 +478,28 @@
     letter-spacing: 0.12em;
     color: rgba(245,242,234,0.3);
   }
- 
+
   footer .footer-logo {
     font-family: 'Bebas Neue', sans-serif;
     font-size: 2rem;
     color: var(--white);
     letter-spacing: 0.05em;
   }
- 
+
   footer .footer-logo span { color: var(--acid); }
- 
+
   /* ── ANIMATIONS ── */
   .fade-in {
     opacity: 0;
     transform: translateY(30px);
     transition: opacity 0.8s ease, transform 0.8s ease;
   }
- 
+
   .fade-in.visible {
     opacity: 1;
     transform: translateY(0);
   }
- 
+
   /* ── NAV ── */
   nav {
     position: fixed; right: 2rem; top: 50%;
@@ -507,7 +507,7 @@
     display: flex; flex-direction: column; gap: 1rem;
     z-index: 100;
   }
- 
+
   nav a {
     width: 6px; height: 6px;
     border-radius: 50%;
@@ -517,7 +517,7 @@
     text-decoration: none;
     position: relative;
   }
- 
+
   nav a::after {
     content: attr(data-label);
     position: absolute;
@@ -532,17 +532,17 @@
     transition: opacity 0.3s;
     pointer-events: none;
   }
- 
+
   nav a:hover { background: var(--acid); transform: scale(1.5); }
   nav a:hover::after { opacity: 1; }
   nav a.active { background: var(--acid); }
- 
+
   /* ── METHODOLOGY STEPS ── */
   .steps {
     display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
     gap: 2rem; margin-top: 3rem;
   }
- 
+
   .step-card {
     position: relative;
     padding: 2rem;
@@ -550,9 +550,9 @@
     overflow: hidden;
     transition: border-color 0.3s;
   }
- 
+
   .step-card:hover { border-color: var(--acid); }
- 
+
   .step-num {
     font-family: 'Bebas Neue', sans-serif;
     font-size: 5rem;
@@ -561,7 +561,7 @@
     position: absolute;
     top: 1rem; right: 1.5rem;
   }
- 
+
   .step-title {
     font-family: 'Space Mono', monospace;
     font-size: 0.75rem;
@@ -571,7 +571,7 @@
     margin-bottom: 1rem;
     position: relative; z-index: 1;
   }
- 
+
   .step-desc {
     font-size: 0.85rem;
     color: rgba(245,242,234,0.6);
@@ -579,15 +579,15 @@
     position: relative; z-index: 1;
     max-width: 100%;
   }
- 
+
   /* ── COMPARISON ── */
   .compare-grid {
     display: grid; grid-template-columns: 1fr 1fr;
     gap: 3rem; margin-top: 3rem;
   }
- 
+
   .compare-col h3 { margin-bottom: 1.5rem; }
- 
+
   .compare-item {
     display: flex; justify-content: space-between;
     padding: 0.8rem 0;
@@ -595,10 +595,10 @@
     font-size: 0.85rem;
     color: rgba(245,242,234,0.6);
   }
- 
+
   .compare-val-bad { color: var(--rust); font-family: 'Space Mono', monospace; font-size: 0.75rem; }
   .compare-val-good { color: var(--acid); font-family: 'Space Mono', monospace; font-size: 0.75rem; }
- 
+
   @media (max-width: 768px) {
     .abstract-grid, .compare-grid { grid-template-columns: 1fr; }
     .topbar { flex-direction: column; gap: 0.5rem; text-align: center; }
@@ -610,10 +610,11 @@
 </style>
 </head>
 <body>
- 
+
 <!-- SIDE NAV -->
 <nav id="sidenav">
   <a href="#hero" data-label="Inicio" class="active"></a>
+  <a href="#video" data-label="Video"></a>
   <a href="#resumen" data-label="Resumen"></a>
   <a href="#objetivos" data-label="Objetivos"></a>
   <a href="#componentes" data-label="Componentes"></a>
@@ -624,7 +625,7 @@
   <a href="#conclusiones" data-label="Conclusiones"></a>
   <a href="#referencias" data-label="Referencias"></a>
 </nav>
- 
+
 <!-- HERO -->
 <section class="hero" id="hero">
   <div class="hero-grid"></div>
@@ -649,7 +650,7 @@
     <div>Fecha<span>Marzo 2026</span></div>
   </div>
 </section>
- 
+
 <!-- TICKER -->
 <div class="ticker">
   <div class="ticker-inner">
@@ -673,7 +674,24 @@
     <span class="ticker-item">Servomotores</span>
   </div>
 </div>
- 
+
+<!-- VIDEO -->
+<section id="video" style="position:relative;">
+  <span class="section-number">00</span>
+  <div class="section-label">00 — Demo en Video</div>
+  <h2 class="fade-in">Speech</h2>
+  <div class="fade-in" style="margin-top:2.5rem; position:relative; width:100%; padding-bottom:56.25%; height:0; overflow:hidden; border:1px solid var(--border);">
+    <iframe
+      src="https://www.youtube.com/embed/NrT_QQgynb0"
+      title="LA GARRA — Garra Robótica Automatizada"
+      frameborder="0"
+      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+      allowfullscreen
+      style="position:absolute; top:0; left:0; width:100%; height:100%;">
+    </iframe>
+  </div>
+</section>
+
 <!-- RESUMEN -->
 <section id="resumen" style="position:relative;">
   <span class="section-number">01</span>
@@ -681,20 +699,20 @@
   <h2 class="fade-in">Sobre el<br>Proyecto</h2>
   <div class="abstract-grid">
     <div class="abstract-block fade-in">
-      <h3>Español</h3>
+      <h3>Resumen</h3>
       <p>Este proyecto consiste en el diseño y programación de una garra robótica automatizada capaz de identificar, separar y clasificar diferentes tipos de residuos —vidrio, plástico, metal— para facilitar el proceso de reciclaje.</p>
       <p>El sistema utiliza sensores electrónicos capacitivos, inductivos y ultrasónicos que detectan las características de cada material y los traslada de la banda transportadora a su sitio de disposición correspondiente.</p>
       <p>La propuesta busca mejorar la gestión de residuos, reducir la contaminación ambiental y eliminar el riesgo de lesiones por manipulación manual de materiales peligrosos.</p>
     </div>
     <div class="abstract-block fade-in">
-      <h3>Abstract (English)</h3>
+      <h3>Abstract</h3>
       <p>This project involves the design and programming of an automated robotic gripper capable of identifying, separating, and sorting different types of waste —glass, plastic, metal— to facilitate the recycling process.</p>
       <p>The system uses electronic sensors —capacitive, inductive, and ultrasonic— to detect the characteristics of each material; waste is then transferred from the conveyor belt to its designated disposal site.</p>
       <p>The solution aims to improve waste management, reduce environmental pollution, and prevent skin injuries caused by improper handling of hazardous waste.</p>
     </div>
   </div>
 </section>
- 
+
 <!-- OBJETIVOS -->
 <section id="objetivos" style="position:relative;">
   <span class="section-number">02</span>
@@ -709,7 +727,7 @@
     <li class="fade-in"><span class="obj-num">5</span>Implementar un sistema de clasificación automática con banda transportadora y contenedores de separación.</li>
   </ul>
 </section>
- 
+
 <!-- COMPONENTES -->
 <section id="componentes" style="position:relative;">
   <span class="section-number">03</span>
@@ -763,7 +781,7 @@
     </div>
   </div>
 </section>
- 
+
 <!-- METODOLOGÍA -->
 <section id="metodologia" style="position:relative;">
   <span class="section-number">04</span>
@@ -802,7 +820,7 @@
     </div>
   </div>
 </section>
- 
+
 <!-- FMEA -->
 <section id="fmea" style="position:relative;">
   <span class="section-number">05</span>
@@ -865,7 +883,7 @@
     </table>
   </div>
 </section>
- 
+
 <!-- ENERGÍA + KPIs -->
 <section id="energia" style="position:relative;">
   <span class="section-number">06</span>
@@ -904,7 +922,7 @@
     </div>
   </div>
 </section>
- 
+
 <!-- COMPARACIÓN -->
 <section id="comparacion" style="position:relative;">
   <span class="section-number">07</span>
@@ -929,7 +947,7 @@
     </div>
   </div>
 </section>
- 
+
 <!-- CONCLUSIONES -->
 <section id="conclusiones" style="position:relative;">
   <span class="section-number">08</span>
@@ -943,7 +961,7 @@
     <li class="fade-in"><span class="conc-bullet">→</span>El proyecto articuló conocimientos de electrónica, programación, control y automatización industrial en una solución real.</li>
   </ul>
 </section>
- 
+
 <!-- REFERENCIAS -->
 <section id="referencias" style="position:relative;">
   <span class="section-number">09</span>
@@ -968,14 +986,14 @@
     <li>ZenRobotics. (s. f.). <em>Smart robotic recycling.</em> https://zenrobotics.com</li>
   </ul>
 </section>
- 
+
 <!-- FOOTER -->
 <footer>
   <div class="footer-logo">LA <span>GARRA</span></div>
   <div>Universidad San Buenaventura · Bogotá · 2026</div>
   <div>Automatización Industrial</div>
 </footer>
- 
+
 <script>
   // ── FADE IN ON SCROLL ──
   const observer = new IntersectionObserver((entries) => {
@@ -986,13 +1004,13 @@
       }
     });
   }, { threshold: 0.1 });
- 
+
   document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
- 
+
   // ── ACTIVE NAV DOT ──
   const sections = document.querySelectorAll('section[id], footer');
   const navLinks = document.querySelectorAll('nav a');
- 
+
   const navObserver = new IntersectionObserver((entries) => {
     entries.forEach(entry => {
       if (entry.isIntersecting) {
@@ -1002,7 +1020,8 @@
       }
     });
   }, { threshold: 0.4 });
- 
+
   document.querySelectorAll('section[id]').forEach(s => navObserver.observe(s));
 </script>
 </body>
+</html>
